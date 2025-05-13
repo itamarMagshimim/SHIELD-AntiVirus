@@ -159,19 +159,19 @@ int isWordInFile(char* filePath, char* word, int condition)
 }
 
 
-// Purpose: Perform a comprehensive scan of all files within the specified folder to detect virus signature
-// & also, create / delete and recreate antiVirusLog.txt file to save the scan result for each file (by alphabetic order).
+// Purpose: Perform a virus scan on files in a directory using the specified scan mode.
 
 // Parameters:
-//   folderPath: The directory path to be scanned for potential viruses.
-//   virusSignature: The specific virus signature to identify during the scan.
+//   folderPath: Path to the directory to scan.
+//   virusSignature: The virus signature to detect.
+//   scanMode: 1 for quick scan (first & last 20%), 2 for advanced scan (full file).
 
 // Return value:
 //   0 - success.
 //   1 - failure.
 
-// STATUS: FINISHED
-int advancedScan(char* folderPath, char* virusSignature)
+//STATUS: NEEDS TO BE CHECKED.
+int scanFolder(char* folderPath, char* virusSignature, int scanMode)
 {
     startScanProcess();
 
@@ -188,55 +188,7 @@ int advancedScan(char* folderPath, char* virusSignature)
         char fullPath[1024];
         snprintf(fullPath, sizeof(fullPath), "%s/%s", folderPath, entry->d_name);
 
-        // virus signature is at the file
-        if (isWordInFile(fullPath, virusSignature, 2)) // 2 - because it's advanced scan.
-        {
-            updateLog(folderPath, entry->d_name, "injected");
-            printf("%s - %s\n", entry->d_name, "injected");
-        }
-        else
-        {
-            updateLog(folderPath, entry->d_name, "clear");
-            printf("%s - %s\n", entry->d_name, "clear");
-        }
-    }
-
-    closedir(dir);
-    return SUCCESS;
-}
-
-
-// Purpose: Scan only the first and last 20% of each file within the specified folder to detect the virus signature
-// & also, create / delete and recreate antiVirusLog.txt file to save the scan result for each file (by alphabetic order).
-
-// Parameters:
-//   folderPath: The directory path to be scanned for potential viruses.
-//   virusSignature: The specific virus signature to identify during the scan.
-
-// Return value:
-//   0 - success.
-//   1 - failure.
-
-// STATUS: FINISHED
-int quickScan(char* folderPath, char* virusSignature)
-{
-    startScanProcess();
-
-    DIR* dir = opendir(folderPath);
-    struct dirent* entry;
-
-    if (dir == NULL)
-    {
-        error_handling();
-    }
-
-    while ((entry = readdir(dir)))
-    {
-        char fullPath[1024];
-        snprintf(fullPath, sizeof(fullPath), "%s/%s", folderPath, entry->d_name);
-
-        // virus signature is at the file
-        if (isWordInFile(fullPath, virusSignature, 1)) // 1 - because it's quick scan.
+        if (isWordInFile(fullPath, virusSignature, scanMode))
         {
             updateLog(folderPath, entry->d_name, "injected");
             printf("%s - %s\n", entry->d_name, "injected");
@@ -319,7 +271,7 @@ int main(const int argc, char *argv[])
     switch (choose)
     {
         case 1:
-            if (quickScan(folderPath, virusSignature) != SUCCESS)
+            if (scanFolder(folderPath, virusSignature, 1) != SUCCESS)
             {
                 error_handling();
             }
@@ -330,7 +282,7 @@ int main(const int argc, char *argv[])
             break;
 
         case 2:
-            if (advancedScan(folderPath, virusSignature) != SUCCESS)
+            if (scanFolder(folderPath, virusSignature, 2) != SUCCESS)
             {
                 error_handling();
             }
