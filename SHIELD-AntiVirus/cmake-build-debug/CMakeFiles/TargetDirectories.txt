@@ -1,3 +1,0 @@
-C:/Users/Cyber_AI/Documents/SHIELD/cmake-build-debug/CMakeFiles/antiVirus.dir
-C:/Users/Cyber_AI/Documents/SHIELD/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/Cyber_AI/Documents/SHIELD/cmake-build-debug/CMakeFiles/rebuild_cache.dir
